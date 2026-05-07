@@ -46,6 +46,7 @@ class BCD {
 
 const one = new BCD(65536);
 
+console.log(one.digits)
 console.log(one.toNumber());
 console.log(one.toBigint());
 console.log(one.toString());
