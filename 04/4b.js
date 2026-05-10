@@ -1,10 +1,10 @@
 class BCD {
 
-  packBSD(digit1, digit2) {
+  packBCD(digit1, digit2) {
     return (digit1 << 4) | digit2;
   }
 
-  unpackBSC(byte) {
+  unpackBCD(byte) {
     return [byte >> 4, byte & 0x0f];
   }
 
@@ -23,9 +23,9 @@ class BCD {
 
     for (let i = 0; i < array.length; i += 2) {
       if (i + 1 < array.length) {
-        result.push(this.packBSD(array[i], array[i + 1]));
+        result.push(this.packBCD(array[i], array[i + 1]));
       } else {
-        result.push(this.packBSD(array[i], 0));
+        result.push(this.packBCD(array[i], 0));
       }
     }
 
@@ -38,8 +38,7 @@ class BCD {
     let count = 0;
 
     for (let i = 0; i < this.digits.length; i++) {
-      const first = this.unpackBSC(this.digits[i])[0];
-      const last = this.unpackBSC(this.digits[i])[1];
+      const [first, last] = this.unpackBCD(this.digits[i]);
 
       if (count < this.digLen) {
         result = result * 10 + first;
@@ -61,8 +60,7 @@ class BCD {
     let count = 0;
 
     for (let i = 0; i < this.digits.length; i++) {
-      const first = this.unpackBSC(this.digits[i])[0];
-      const last = this.unpackBSC(this.digits[i])[1];
+      const [first, last] = this.unpackBCD(this.digits[i]);
 
       if (count < this.digLen) {
         result = result * 10n + BigInt(first);
@@ -79,25 +77,24 @@ class BCD {
   }
 
   toString() {
-    let result = [];
+    let result = '';
     let count = 0;
 
     for (let i = 0; i < this.digits.length; i++) {
-      const first = this.unpackBSC(this.digits[i])[0];
-      const last = this.unpackBSC(this.digits[i])[1];
+      const [first, last] = this.unpackBCD(this.digits[i]);
 
       if (count < this.digLen) {
-        result.push(first + "");
+        result += first;
         count++;
       }
 
       if (count < this.digLen) {
-        result.push(last + "");
+        result += last;
         count++;
       }
     }
 
-    return result.join("");
+    return result;
   }
 
   at(n) {
@@ -107,9 +104,9 @@ class BCD {
     }
 
     if (index % 2 === 0) {
-      return this.unpackBSC(this.digits[index / 2])[0];
+      return this.unpackBCD(this.digits[index / 2])[0];
     } else {
-      return this.unpackBSC(this.digits[(index - 1) / 2])[1];
+      return this.unpackBCD(this.digits[(index - 1) / 2])[1];
     }
   }
 }
