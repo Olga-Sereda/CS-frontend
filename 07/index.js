@@ -30,7 +30,7 @@ function seril(arr) {
     offset += bytes.byteLength;
   }
 
-  console.log(uint8Array);
+  // console.log(uint8Array);
 
   // return uint8Array;
   return {
@@ -61,9 +61,37 @@ function seril(arr) {
         }
       }
     },
+    bytes: uint8Array,
   };
+}
+
+function decodeStrings(buffer) {
+  const uint8Array = buffer.bytes;
+
+  const view = new DataView(uint8Array.buffer);
+
+  let readOffset = 0;
+
+  const totalStrings = view.getUint32(readOffset, true);
+  readOffset += 4;
+  let arr = [];
+  for (let i = 0; i < totalStrings; i++) {
+    const strLenght = view.getUint32(readOffset, true);
+    readOffset += 4;
+
+    const strBytes = uint8Array.subarray(readOffset, readOffset + strLenght);
+    const res = new TextDecoder().decode(strBytes);
+
+    readOffset += strLenght;
+    arr.push(res);
+  }
+
+  return arr;
 }
 
 const strings = ["hello", "мир", ""];
 const buf = seril(strings);
+console.log(buf.bytes);   
 console.log(buf.at(1));
+const decoded = decodeStrings(buf);
+console.log(decoded);
